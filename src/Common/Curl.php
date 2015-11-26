@@ -10,7 +10,6 @@
  * Connecting to Twitter API using SSL
  * https://dev.twitter.com/overview/api/ssl
  */
-
 namespace TwitterOAuth\Common;
 
 use TwitterOAuth\Exception\CurlException;
