@@ -7,7 +7,6 @@
  * @author Ricardo Pereira <github@ricardopereira.es>
  * @copyright 2014
  */
-
 namespace TwitterOAuth\Auth;
 
 class ApplicationOnlyAuth extends AuthAbstract
