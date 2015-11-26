@@ -2,7 +2,7 @@
 
 /**
  * TwitterOAuth - https://github.com/ricardoper/TwitterOAuth
- * PHP library to communicate with Twitter OAuth API version 1.1
+ * PHP library to communicate with Twitter OAuth API version 1.1.
  *
  * @author Ricardo Pereira <github@ricardopereira.es>
  * @copyright 2014
@@ -13,9 +13,10 @@ namespace TwitterOAuth\Serializer;
 class JsonSerializer implements SerializerInterface
 {
     /**
-     * Format Output To Json
+     * Format Output To Json.
      *
-     * @param  string $response
+     * @param string $response
+     *
      * @return mixed
      */
     public function format($response)

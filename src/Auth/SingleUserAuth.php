@@ -2,7 +2,7 @@
 
 /**
  * TwitterOAuth - https://github.com/ricardoper/TwitterOAuth
- * PHP library to communicate with Twitter OAuth API version 1.1
+ * PHP library to communicate with Twitter OAuth API version 1.1.
  *
  * @author Ricardo Pereira <github@ricardopereira.es>
  * @copyright 2014
@@ -17,56 +17,57 @@ class SingleUserAuth extends AuthAbstract
      *   - consumer_key         Twitter API key               * Required
      *   - consumer_secret      Twitter API secret            * Required
      *   - oauth_token          Twitter Access token
-     *   - oauth_token_secret   Twitter Access token secret
+     *   - oauth_token_secret   Twitter Access token secret.
      */
-    protected $requiredCredentials = array(
+    protected $requiredCredentials = [
         'consumer_key',
         'consumer_secret',
-    );
+    ];
 
-    protected $urls = array(
+    protected $urls = [
         'domain' => 'https://api.twitter.com/',
         'upload' => 'https://upload.twitter.com/',
-        'api' => '1.1/',
-    );
-
+        'api'    => '1.1/',
+    ];
 
     /**
-     * Gets the Twitter Access token
+     * Gets the Twitter Access token.
      *
      * @return string
      */
     public function getAccessToken()
     {
         if (empty($this->credentials['oauth_token'])) {
-            return null;
+            return;
         }
 
         return $this->credentials['oauth_token'];
     }
 
     /**
-     * Gets the Twitter Access token secret
+     * Gets the Twitter Access token secret.
      *
      * @return null|string
      */
     public function getAccessTokenSecret()
     {
         if (empty($this->credentials['oauth_token_secret'])) {
-            return null;
+            return;
         }
 
         return $this->credentials['oauth_token_secret'];
     }
 
     /**
-     * Send a POST call to Twitter API via OAuth
+     * Send a POST call to Twitter API via OAuth.
      *
-     * @param string $call Twitter resource string
-     * @param array $postParams POST parameters to send
-     * @param array $getParams GET parameters to send
-     * @return mixed  Output with selected format
+     * @param string $call       Twitter resource string
+     * @param array  $postParams POST parameters to send
+     * @param array  $getParams  GET parameters to send
+     *
      * @throws \TwitterOAuth\Exception\TwitterException
+     *
+     * @return mixed Output with selected format
      */
     public function post($call, array $postParams = null, array $getParams = null)
     {
@@ -96,13 +97,15 @@ class SingleUserAuth extends AuthAbstract
     }
 
     /**
-     * Send a POST call with media upload to Twitter API via OAuth
+     * Send a POST call with media upload to Twitter API via OAuth.
      *
-     * @param string $call Twitter resource string
+     * @param string $call     Twitter resource string
      * @param string $filename File location to upload
-     * @return mixed  Output with selected format
+     *
      * @throws \TwitterOAuth\Exception\CurlException
      * @throws \TwitterOAuth\Exception\TwitterException
+     *
+     * @return mixed Output with selected format
      */
     public function postMedia($call, $filename)
     {
@@ -114,12 +117,12 @@ class SingleUserAuth extends AuthAbstract
 
         $this->withMedia = true;
 
-        $mimeBoundary = sha1($call . microtime());
+        $mimeBoundary = sha1($call.microtime());
 
-        $params = array(
-            'post' => $this->buildMultipart($mimeBoundary, $filename),
+        $params = [
+            'post'    => $this->buildMultipart($mimeBoundary, $filename),
             'headers' => $this->buildUploadMediaHeader($mimeBoundary),
-        );
+        ];
 
         $response = $this->curl->send($this->getUrl(), $params);
 
@@ -138,30 +141,29 @@ class SingleUserAuth extends AuthAbstract
         return $this->serializer->format($response['body']);
     }
 
-
     /**
-     * Getting OAuth parameters to be used in request headers
+     * Getting OAuth parameters to be used in request headers.
      *
-     * @return array  OAuth parameters
+     * @return array OAuth parameters
      */
     protected function getOauthParameters()
     {
         $time = time();
 
-        return array(
-            'oauth_consumer_key' => $this->getConsumerKey(),
-            'oauth_nonce' => trim(base64_encode($time), '='),
+        return [
+            'oauth_consumer_key'     => $this->getConsumerKey(),
+            'oauth_nonce'            => trim(base64_encode($time), '='),
             'oauth_signature_method' => 'HMAC-SHA1',
-            'oauth_timestamp' => $time,
-            'oauth_token' => $this->getAccessToken(),
-            'oauth_version' => '1.0'
-        );
+            'oauth_timestamp'        => $time,
+            'oauth_token'            => $this->getAccessToken(),
+            'oauth_version'          => '1.0',
+        ];
     }
 
     /**
-     * Converting all parameters agetrrays to a single string with encoded values
+     * Converting all parameters agetrrays to a single string with encoded values.
      *
-     * @return string  Single string with encoded values
+     * @return string Single string with encoded values
      */
     protected function getRequestString()
     {
@@ -173,9 +175,9 @@ class SingleUserAuth extends AuthAbstract
     }
 
     /**
-     * Getting OAuth signature base string
+     * Getting OAuth signature base string.
      *
-     * @return string  OAuth signature base string
+     * @return string OAuth signature base string
      */
     protected function getSignatureBaseString()
     {
@@ -183,23 +185,23 @@ class SingleUserAuth extends AuthAbstract
 
         $url = rawurlencode($this->getUrl());
 
-        return $method . '&' . $url . '&' . $this->getRequestString();
+        return $method.'&'.$url.'&'.$this->getRequestString();
     }
 
     /**
-     * Getting a signing key
+     * Getting a signing key.
      *
-     * @return string  Signing key
+     * @return string Signing key
      */
     protected function getSigningKey()
     {
-        return $this->getConsumerSecret() . '&' . $this->getAccessTokenSecret();
+        return $this->getConsumerSecret().'&'.$this->getAccessTokenSecret();
     }
 
     /**
-     * Calculating the signature
+     * Calculating the signature.
      *
-     * @return string  Signature
+     * @return string Signature
      */
     protected function calculateSignature()
     {
@@ -207,20 +209,20 @@ class SingleUserAuth extends AuthAbstract
     }
 
     /**
-     * Converting OAuth parameters array to a single string with encoded values
+     * Converting OAuth parameters array to a single string with encoded values.
      *
-     * @return string  Single string with encoded values
+     * @return string Single string with encoded values
      */
     protected function getOauthString()
     {
-        $oauth = array_merge($this->getOauthParameters(), array('oauth_signature' => $this->calculateSignature()));
+        $oauth = array_merge($this->getOauthParameters(), ['oauth_signature' => $this->calculateSignature()]);
 
         ksort($oauth);
 
-        $values = array();
+        $values = [];
 
         foreach ($oauth as $key => $value) {
-            $values[] = $key . '="' . rawurlencode($value) . '"';
+            $values[] = $key.'="'.rawurlencode($value).'"';
         }
 
         $oauth = implode(', ', $values);
@@ -231,30 +233,31 @@ class SingleUserAuth extends AuthAbstract
     }
 
     /**
-     * Building request HTTP headers
+     * Building request HTTP headers.
      *
-     * @return array  HTTP headers
+     * @return array HTTP headers
      */
     protected function buildRequestHeader()
     {
-        return array(
-            'Authorization: OAuth ' . $this->getOauthString(),
-            'Expect:'
-        );
+        return [
+            'Authorization: OAuth '.$this->getOauthString(),
+            'Expect:',
+        ];
     }
 
     /**
-     * Building upload media headers
+     * Building upload media headers.
      *
      * @param string $mimeBoundary MIME boundary ID
-     * @return array  HTTP headers
+     *
+     * @return array HTTP headers
      */
     protected function buildUploadMediaHeader($mimeBoundary)
     {
-        return array(
-            'Authorization: OAuth ' . $this->getOauthString(),
-            'Content-Type: multipart/form-data; boundary=' . $mimeBoundary,
-            'Expect:'
-        );
+        return [
+            'Authorization: OAuth '.$this->getOauthString(),
+            'Content-Type: multipart/form-data; boundary='.$mimeBoundary,
+            'Expect:',
+        ];
     }
 }

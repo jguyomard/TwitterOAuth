@@ -2,17 +2,15 @@
 
 /**
  * TwitterOAuth - https://github.com/ricardoper/TwitterOAuth
- * PHP library to communicate with Twitter OAuth API version 1.1
+ * PHP library to communicate with Twitter OAuth API version 1.1.
  *
  * @author Ricardo Pereira <github@ricardopereira.es>
  * @copyright 2014
  */
-
-require __DIR__ . '/../../../vendor/autoload.php';
+require __DIR__.'/../../../vendor/autoload.php';
 
 use TwitterOAuth\Auth\ApplicationOnlyAuth;
 use TwitterOAuth\Serializer\ArraySerializer;
-
 
 date_default_timezone_set('UTC');
 
@@ -38,20 +36,20 @@ header('Content-Type: text/html; charset=utf-8');
 
 <?php
 
-$credentials = array(
-    'consumer_key' => 'xvz1evFS4wEEPTGEFPHBog',
+$credentials = [
+    'consumer_key'    => 'xvz1evFS4wEEPTGEFPHBog',
     'consumer_secret' => 'L8qq9PZyRg6ieKGEKhZolGC0vJWLw8iEJ88DRdyOg',
-);
+];
 
 $auth = new ApplicationOnlyAuth($credentials, new ArraySerializer());
 
 // ==== ==== ==== //
 
-$params = array(
-    'screen_name' => 'ricard0per',
-    'count' => 3,
+$params = [
+    'screen_name'     => 'ricard0per',
+    'count'           => 3,
     'exclude_replies' => true,
-);
+];
 
 $response = $auth->get('statuses/user_timeline', $params);
 
@@ -61,10 +59,10 @@ echo '<pre class="array">'; print_r($response); echo '</pre><hr />';
 
 // ==== ==== ==== //
 
-$params = array(
-    'q' => '#php',
+$params = [
+    'q'     => '#php',
     'count' => 3,
-);
+];
 
 $response = $auth->get('search/tweets', $params);
 
@@ -74,10 +72,10 @@ echo '<pre class="array">'; print_r($response); echo '</pre><hr />';
 
 // ==== ==== ==== //
 
-$params = array(
+$params = [
     'screen_name' => 'ricard0per',
-    'count' => 10,
-);
+    'count'       => 10,
+];
 
 $response = $auth->get('followers/ids', $params);
 

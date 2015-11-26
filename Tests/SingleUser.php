@@ -2,17 +2,15 @@
 
 /**
  * TwitterOAuth - https://github.com/ricardoper/TwitterOAuth
- * PHP library to communicate with Twitter OAuth API version 1.1
+ * PHP library to communicate with Twitter OAuth API version 1.1.
  *
  * @author Ricardo Pereira <github@ricardopereira.es>
  * @copyright 2014
  */
-
-require __DIR__ . '/../../../vendor/autoload.php';
+require __DIR__.'/../../../vendor/autoload.php';
 
 use TwitterOAuth\Auth\SingleUserAuth;
 use TwitterOAuth\Serializer\ArraySerializer;
-
 
 date_default_timezone_set('UTC');
 
@@ -38,22 +36,22 @@ header('Content-Type: text/html; charset=utf-8');
 
 <?php
 
-$credentials = array(
-    'consumer_key' => 'xvz1evFS4wEEPTGEFPHBog',
-    'consumer_secret' => 'L8qq9PZyRg6ieKGEKhZolGC0vJWLw8iEJ88DRdyOg',
-    'oauth_token' => 'e98c603b55646a6d22249d9b0096e9af29bafcc2',
+$credentials = [
+    'consumer_key'       => 'xvz1evFS4wEEPTGEFPHBog',
+    'consumer_secret'    => 'L8qq9PZyRg6ieKGEKhZolGC0vJWLw8iEJ88DRdyOg',
+    'oauth_token'        => 'e98c603b55646a6d22249d9b0096e9af29bafcc2',
     'oauth_token_secret' => '07cfdf42835998375e71b46d96b4488a5c659c2f',
-);
+];
 
 $auth = new SingleUserAuth($credentials, new ArraySerializer());
 
 // ==== ==== ==== //
 
-$params = array(
-    'screen_name' => 'ricard0per',
-    'count' => 3,
+$params = [
+    'screen_name'     => 'ricard0per',
+    'count'           => 3,
     'exclude_replies' => true,
-);
+];
 
 $response = $auth->get('statuses/user_timeline', $params);
 
@@ -63,10 +61,10 @@ echo '<pre class="array">'; print_r($response); echo '</pre><hr />';
 
 // ==== ==== ==== //
 
-$params = array(
-    'q' => '#php',
+$params = [
+    'q'     => '#php',
     'count' => 3,
-);
+];
 
 $response = $auth->get('search/tweets', $params);
 
@@ -76,10 +74,10 @@ echo '<pre class="array">'; print_r($response); echo '</pre><hr />';
 
 // ==== ==== ==== //
 
-$params = array(
+$params = [
     'screen_name' => 'ricard0per',
-    'count' => 10,
-);
+    'count'       => 10,
+];
 
 $response = $auth->get('followers/ids', $params);
 
@@ -89,13 +87,13 @@ echo '<pre class="array">'; print_r($response); echo '</pre><hr />';
 
 // ==== ==== ==== //
 
-$response = $auth->postMedia('media/upload', __DIR__ . '/TwitterUpload.jpg');
+$response = $auth->postMedia('media/upload', __DIR__.'/TwitterUpload.jpg');
 $media_id = $response['media_id'];
 
-$params = array(
-    'status' => 'This is a media/upload test :: TwitterOAuth - https://github.com/ricardoper/TwitterOAuth/ - ',
+$params = [
+    'status'    => 'This is a media/upload test :: TwitterOAuth - https://github.com/ricardoper/TwitterOAuth/ - ',
     'media_ids' => $media_id,
-);
+];
 
 $response = $auth->post('statuses/update', $params);
 
@@ -105,11 +103,11 @@ echo '<pre class="array">'; print_r($response); echo '</pre><hr />';
 
 // ==== ==== ==== //
 
-$params = array(
-    'name' => 'List001',
-    'mode' => 'private',
+$params = [
+    'name'        => 'List001',
+    'mode'        => 'private',
     'description' => 'List Test',
-);
+];
 
 $response = $auth->post('lists/create', $params);
 
@@ -119,10 +117,10 @@ echo '<pre class="array">'; print_r($response); echo '</pre><hr />';
 
 // ==== ==== ==== //
 
-$params = array(
+$params = [
     'owner_screen_name' => 'ricard0per',
-    'slug' => 'list001',
-);
+    'slug'              => 'list001',
+];
 
 $response = $auth->post('lists/destroy', $params);
 
@@ -132,7 +130,7 @@ echo '<pre class="array">'; print_r($response); echo '</pre><hr />';
 
 // ==== ==== ==== //
 
-/**
+/*
  * Reset Connection Without OAuth Tokens
  */
 unset($auth, $credentials['oauth_token'], $credentials['oauth_token_secret']);
@@ -141,9 +139,9 @@ $auth = new SingleUserAuth($credentials, new ArraySerializer());
 
 // ==== ==== ==== //
 
-$params = array(
+$params = [
     'oauth_callback' => '',
-);
+];
 
 $response = $auth->post('oauth/request_token', $params);
 
