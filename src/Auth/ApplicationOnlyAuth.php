@@ -2,7 +2,7 @@
 
 /**
  * TwitterOAuth - https://github.com/ricardoper/TwitterOAuth
- * PHP library to communicate with Twitter OAuth API version 1.1
+ * PHP library to communicate with Twitter OAuth API version 1.1.
  *
  * @author Ricardo Pereira <github@ricardopereira.es>
  * @copyright 2014
@@ -15,38 +15,38 @@ class ApplicationOnlyAuth extends AuthAbstract
     /**
      * Expects the follow parameters:
      *   - consumer_key      Twitter API key      * Required
-     *   - consumer_secret   Twitter API secret   * Required
+     *   - consumer_secret   Twitter API secret   * Required.
      */
-    protected $requiredCredentials = array(
+    protected $requiredCredentials = [
         'consumer_key',
         'consumer_secret',
-    );
+    ];
 
-    protected $urls = array(
-        'domain' => 'https://api.twitter.com/',
-        'api' => '1.1/',
+    protected $urls = [
+        'domain'   => 'https://api.twitter.com/',
+        'api'      => '1.1/',
         'getToken' => 'oauth2/token',
         'invToken' => 'oauth2/invalidate_token',
-    );
+    ];
 
     protected $bearerToken = null;
 
-
     /**
-     *  Get a bearer token from consumer keys
+     *  Get a bearer token from consumer keys.
      *
-     * @return null|string  Bearer token
      * @throws \TwitterOAuth\Exception\CurlException
      * @throws \TwitterOAuth\Exception\TwitterException
+     *
+     * @return null|string Bearer token
      */
     public function getBearerToken()
     {
         $url = $this->getBearerTokenUrl();
 
-        $params = array(
-            'post' => array('grant_type' => 'client_credentials'),
+        $params = [
+            'post'    => ['grant_type' => 'client_credentials'],
             'headers' => $this->buildBearerTokenHeader(),
-        );
+        ];
 
         $response = $this->curl->send($url, $params);
 
@@ -64,9 +64,10 @@ class ApplicationOnlyAuth extends AuthAbstract
     }
 
     /**
-     *  Set a bearer token
+     *  Set a bearer token.
      *
      * @param string $bearerToken Bearer Token
+     *
      * @return bool
      */
     public function setBearerToken($bearerToken)
@@ -79,11 +80,12 @@ class ApplicationOnlyAuth extends AuthAbstract
     }
 
     /**
-     *  Invalidate a bearer token
+     *  Invalidate a bearer token.
      *
-     * @return bool
      * @throws \TwitterOAuth\Exception\CurlException
      * @throws \TwitterOAuth\Exception\TwitterException
+     *
+     * @return bool
      */
     public function invalidateBearerToken()
     {
@@ -95,10 +97,10 @@ class ApplicationOnlyAuth extends AuthAbstract
             $bearerToken = $this->getBearerToken();
         }
 
-        $params = array(
-            'post' => array('access_token' => $bearerToken),
+        $params = [
+            'post'    => ['access_token' => $bearerToken],
             'headers' => $this->buildBearerTokenHeader(),
-        );
+        ];
 
         $response = $this->curl->send($url, $params);
 
@@ -113,57 +115,56 @@ class ApplicationOnlyAuth extends AuthAbstract
         return true;
     }
 
-
     /**
-     * Generate bearer token credentials
+     * Generate bearer token credentials.
      *
-     * @return string  Bearer token credentials
+     * @return string Bearer token credentials
      */
     protected function getBearerTokenCredentials()
     {
-        $signingKey = rawurlencode($this->getConsumerKey()) . ':' . rawurlencode($this->getConsumerSecret());
+        $signingKey = rawurlencode($this->getConsumerKey()).':'.rawurlencode($this->getConsumerSecret());
 
         return base64_encode($signingKey);
     }
 
     /**
-     * Getting bearer token URL
+     * Getting bearer token URL.
      *
-     * @return string  Bearer token URL
+     * @return string Bearer token URL
      */
     protected function getBearerTokenUrl()
     {
-        return $this->urls['domain'] . $this->urls['getToken'];
+        return $this->urls['domain'].$this->urls['getToken'];
     }
 
     /**
-     * Getting invalidate bearer token URL
+     * Getting invalidate bearer token URL.
      *
-     * @return string  Invalidate bearer token URL
+     * @return string Invalidate bearer token URL
      */
     protected function getInvalidateBearerTokenUrl()
     {
-        return $this->urls['domain'] . $this->urls['invToken'];
+        return $this->urls['domain'].$this->urls['invToken'];
     }
 
     /**
-     * Building request bearer token HTTP headers
+     * Building request bearer token HTTP headers.
      *
-     * @return array  HTTP headers
+     * @return array HTTP headers
      */
     protected function buildBearerTokenHeader()
     {
-        return array(
-            'Authorization: Basic ' . $this->getBearerTokenCredentials(),
+        return [
+            'Authorization: Basic '.$this->getBearerTokenCredentials(),
             'Content-Type: application/x-www-form-urlencoded;charset=UTF-8',
-            'Expect:'
-        );
+            'Expect:',
+        ];
     }
 
     /**
-     * Building request HTTP headers
+     * Building request HTTP headers.
      *
-     * @return array  HTTP headers
+     * @return array HTTP headers
      */
     protected function buildRequestHeader()
     {
@@ -173,9 +174,9 @@ class ApplicationOnlyAuth extends AuthAbstract
             $bearerToken = $this->getBearerToken();
         }
 
-        return array(
-            'Authorization: Bearer ' . rawurlencode($bearerToken),
-            'Expect:'
-        );
+        return [
+            'Authorization: Bearer '.rawurlencode($bearerToken),
+            'Expect:',
+        ];
     }
 }

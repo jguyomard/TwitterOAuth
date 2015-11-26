@@ -2,7 +2,7 @@
 
 /**
  * TwitterOAuth - https://github.com/ricardoper/TwitterOAuth
- * PHP library to communicate with Twitter OAuth API version 1.1
+ * PHP library to communicate with Twitter OAuth API version 1.1.
  *
  * @author Ricardo Pereira <github@ricardopereira.es>
  * @copyright 2014
@@ -11,35 +11,35 @@
 namespace TwitterOAuth\Auth;
 
 use TwitterOAuth\Common\Curl;
-use TwitterOAuth\Serializer\SerializerInterface;
-use TwitterOAuth\Exception\TwitterException;
 use TwitterOAuth\Exception\FileNotFoundException;
 use TwitterOAuth\Exception\FileNotReadableException;
-use TwitterOAuth\Exception\UnsupportedMimeException;
 use TwitterOAuth\Exception\MissingCredentialsException;
+use TwitterOAuth\Exception\TwitterException;
+use TwitterOAuth\Exception\UnsupportedMimeException;
+use TwitterOAuth\Serializer\SerializerInterface;
 
 abstract class AuthAbstract
 {
     const EOL = "\r\n";
 
-    protected $credentials = array();
+    protected $credentials = [];
     protected $serializer = null;
     protected $curl = null;
 
     protected $call = null;
     protected $method = null;
     protected $withMedia = null;
-    protected $getParams = array();
-    protected $postParams = array();
+    protected $getParams = [];
+    protected $postParams = [];
 
     protected $headers = null;
 
-
     /**
-     * Authentication Base
+     * Authentication Base.
      *
-     * @param array $credentials Credentials Array
-     * @param SerializerInterface $serializer Output Serializer
+     * @param array               $credentials Credentials Array
+     * @param SerializerInterface $serializer  Output Serializer
+     *
      * @throws MissingCredentialsException
      */
     public function __construct(array $credentials, SerializerInterface $serializer)
@@ -56,51 +56,52 @@ abstract class AuthAbstract
     }
 
     /**
-     * Gets the Twitter API key
+     * Gets the Twitter API key.
      *
      * @return null|string
      */
     public function getConsumerKey()
     {
         if (empty($this->credentials['consumer_key'])) {
-            return null;
+            return;
         }
 
         return $this->credentials['consumer_key'];
     }
 
     /**
-     * Gets the Twitter API secret
+     * Gets the Twitter API secret.
      *
      * @return null|string
      */
     public function getConsumerSecret()
     {
         if (empty($this->credentials['consumer_secret'])) {
-            return null;
+            return;
         }
 
         return $this->credentials['consumer_secret'];
     }
 
     /**
-     * Gets Serializer
+     * Gets Serializer.
      *
      * @return null|SerializerInterface
      */
     public function getSerializer()
     {
         if (empty($this->serializer)) {
-            return null;
+            return;
         }
 
         return $this->serializer;
     }
 
     /**
-     * Get response headers
+     * Get response headers.
      *
      * @param null $key
+     *
      * @return array|string|false
      */
     public function getHeaders($key = null)
@@ -117,12 +118,14 @@ abstract class AuthAbstract
     }
 
     /**
-     * Send a GET call to Twitter API via OAuth
+     * Send a GET call to Twitter API via OAuth.
      *
-     * @param string $call Twitter resource string
-     * @param array $getParams GET parameters to send
-     * @return mixed  Output with selected format
+     * @param string $call      Twitter resource string
+     * @param array  $getParams GET parameters to send
+     *
      * @throws TwitterException
+     *
+     * @return mixed Output with selected format
      */
     public function get($call, array $getParams = null)
     {
@@ -147,11 +150,11 @@ abstract class AuthAbstract
         return $this->serializer->format($response['body']);
     }
 
-
     /**
-     * Validate Credentials Array
+     * Validate Credentials Array.
      *
      * @param $credentials
+     *
      * @throws MissingCredentialsException
      */
     protected function validateCredentials($credentials)
@@ -163,16 +166,16 @@ abstract class AuthAbstract
         $diff = array_diff($this->requiredCredentials, $keys);
 
         if (!empty($diff)) {
-            throw new MissingCredentialsException('Missing Credentials: ' . implode($diff, ', '));
+            throw new MissingCredentialsException('Missing Credentials: '.implode($diff, ', '));
         }
 
         unset($credentials, $keys, $diff);
     }
 
     /**
-     * Getting full URL from a Twitter resource
+     * Getting full URL from a Twitter resource.
      *
-     * @return string  Full URL
+     * @return string Full URL
      */
     protected function getUrl()
     {
@@ -191,34 +194,37 @@ abstract class AuthAbstract
             $jsonExt = '';
         }
 
-        return $domain . $apiVersion . $this->call . $jsonExt;
+        return $domain.$apiVersion.$this->call.$jsonExt;
     }
 
     /**
-     * Returns raw response body
+     * Returns raw response body.
+     *
+     * @throws \TwitterOAuth\Exception\CurlException
      *
      * @return array
-     * @throws \TwitterOAuth\Exception\CurlException
      */
     protected function getResponse()
     {
         $url = $this->getUrl();
 
-        $params = array(
-            'get' => $this->getParams,
-            'post' => $this->postParams,
+        $params = [
+            'get'     => $this->getParams,
+            'post'    => $this->postParams,
             'headers' => $this->buildRequestHeader(),
-        );
+        ];
 
         return $this->curl->send($url, $params);
     }
 
     /**
-     * Processing Twitter Exceptions in case of error
+     * Processing Twitter Exceptions in case of error.
      *
      * @param array $response Raw response
-     * @return string
+     *
      * @throws TwitterException
+     *
+     * @return string
      */
     protected function findExceptions($response)
     {
@@ -260,11 +266,12 @@ abstract class AuthAbstract
     }
 
     /**
-     * Build a multipart message
+     * Build a multipart message.
      *
      * @param string $mimeBoundary MIME boundary ID
-     * @param string $filename File location
-     * @return string  Multipart message
+     * @param string $filename     File location
+     *
+     * @return string Multipart message
      */
     protected function buildMultipart($mimeBoundary, $filename)
     {
@@ -274,11 +281,11 @@ abstract class AuthAbstract
 
         $type = $this->supportedMimes($details['extension']);
 
-        $data = '--' . $mimeBoundary . static::EOL;
-        $data .= 'Content-Disposition: form-data; name="media"; filename="' . $details['basename'] . '"' . static::EOL;
-        $data .= 'Content-Type: application/octet-stream' . static::EOL . static::EOL;
-        $data .= $binary . static::EOL;
-        $data .= '--' . $mimeBoundary . '--' . static::EOL . static::EOL;
+        $data = '--'.$mimeBoundary.static::EOL;
+        $data .= 'Content-Disposition: form-data; name="media"; filename="'.$details['basename'].'"'.static::EOL;
+        $data .= 'Content-Type: application/octet-stream'.static::EOL.static::EOL;
+        $data .= $binary.static::EOL;
+        $data .= '--'.$mimeBoundary.'--'.static::EOL.static::EOL;
 
         unset($mimeBoundary, $filename, $binary, $details, $type);
 
@@ -286,45 +293,49 @@ abstract class AuthAbstract
     }
 
     /**
-     * Twitter supported MIME types for media upload
+     * Twitter supported MIME types for media upload.
      *
      * @param string $mime File extension
-     * @return mixed  MIME type
+     *
      * @throws UnsupportedMimeException
+     *
+     * @return mixed MIME type
      */
     protected function supportedMimes($mime)
     {
-        $mimes = array(
-            'png' => 'image/png',
-            'jpe' => 'image/jpeg',
+        $mimes = [
+            'png'  => 'image/png',
+            'jpe'  => 'image/jpeg',
             'jpeg' => 'image/jpeg',
-            'jpg' => 'image/jpeg',
-            'gif' => 'image/gif',
-        );
+            'jpg'  => 'image/jpeg',
+            'gif'  => 'image/gif',
+        ];
 
         if (isset($mimes[$mime])) {
             return $mimes[$mime];
         }
 
-        throw new UnsupportedMimeException;
+        throw new UnsupportedMimeException();
     }
 
     /**
-     * Get binary data of a file
+     * Get binary data of a file.
      *
      * @param string $filename File location
-     * @return string
+     *
      * @throws FileNotFoundException
      * @throws FileNotReadableException
+     *
+     * @return string
      */
     protected function getBinaryFile($filename)
     {
         if (!file_exists($filename)) {
-            throw new FileNotFoundException;
+            throw new FileNotFoundException();
         }
 
         if (!is_readable($filename)) {
-            throw new FileNotReadableException;
+            throw new FileNotReadableException();
         }
 
         ob_start();
@@ -341,15 +352,15 @@ abstract class AuthAbstract
     }
 
     /**
-     * Reset Call State
+     * Reset Call State.
      */
     protected function resetCallState()
     {
         $this->call = null;
         $this->method = null;
         $this->withMedia = null;
-        $this->getParams = array();
-        $this->postParams = array();
+        $this->getParams = [];
+        $this->postParams = [];
         $this->headers = null;
     }
 }
